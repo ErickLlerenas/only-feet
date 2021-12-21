@@ -1,26 +1,71 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import "./app.scss";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+
+//Views
+import NotFound from "./views/not-found/view";
+import Login from "./views/login/view";
+import Home from "./views/home/view";
+import Signup from "./views/signup/view";
+import MyProfile from "./views/my-profile/view";
+import { useEffect } from "react";
+import Layout from "./layout";
+import UserProfile from "./views/user-profile/view";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	const location = useLocation();
+	const navigate = useNavigate();
+	const tokenUser = localStorage.getItem("user_token");
+
+	useEffect(() => {
+		if (
+			tokenUser &&
+			tokenUser !== "" &&
+			(location.pathname === "/login" || location.pathname === "/login/")
+		) {
+			navigate("/", { replace: true });
+		}
+		if (
+			tokenUser &&
+			tokenUser !== "" &&
+			(location.pathname === "/signup" ||
+				location.pathname === "/signup/")
+		) {
+			navigate("/", { replace: true });
+		}
+		return () => {};
+	}, [tokenUser]);
+
+	return (
+		<Routes>
+			<Route path="/login" element={<Login />} />
+			<Route path="/signup" element={<Signup />} />
+			<Route path="*" element={<NotFound />} />
+			<Route
+				path="/"
+				element={
+					<Layout>
+						<Home />
+					</Layout>
+				}
+			/>
+			<Route
+				path="/my-profile"
+				element={
+					<Layout>
+						<MyProfile />
+					</Layout>
+				}
+			/>
+			<Route
+				path="/feet/:id"
+				element={
+					<Layout>
+						<UserProfile />
+					</Layout>
+				}
+			/>
+		</Routes>
+	);
 }
 
 export default App;
